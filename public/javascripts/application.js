@@ -4,12 +4,12 @@ Crafty.background('rgb(127,127,127)');
 //Paddles
 Crafty.e("Paddle, 2D, DOM, Color, Multiway")
   .color('rgb(255,0,0)')
-  .attr({ x: 20, y: 100, w: 10, h: 100 })
-  .multiway(4, { W: -90, S: 90 });
+  .attr({ x: 20, y: 100, w: 100, h: 100 })
+  .multiway(4, { A: 180, D: 0, W: -90, S: 90 });
 Crafty.e("Paddle, 2D, DOM, Color, Multiway")
   .color('rgb(0,255,0)')
   .attr({ x: 580, y: 100, w: 10, h: 100 })
-  .multiway(4, { UP_ARROW: -90, DOWN_ARROW: 90 });
+  .multiway(4, { RIGHT_ARROW: 0, UP_ARROW: -90, DOWN_ARROW: 90, LEFT_ARROW: 180 });
 
 //Ball
 Crafty.e("2D, DOM, Color, Collision")
@@ -20,7 +20,7 @@ Crafty.e("2D, DOM, Color, Collision")
   .bind('EnterFrame', function () {
     //hit floor or roof
     if (this.y <= 0 || this.y >= 290)
-      this.dY *= -1;
+      this.dY *= -1.02;
 
     if (this.x > 600) {
       this.x = 300;
@@ -37,7 +37,7 @@ Crafty.e("2D, DOM, Color, Collision")
     this.y += this.dY;
   })
   .onHit('Paddle', function () {
-  this.dX *= -1;
+  this.dX *= -1.01;
 })
 
 //Score boards
