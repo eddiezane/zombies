@@ -33,7 +33,7 @@ Crafty.scene('Game', function() {
         console.log(data);
         var thePlayers = data.players;
         for (var playerKey in thePlayers) {
-            if (playerKey == player) {
+            if (playerKey == playerData.id) {
                 console.log("SKIPMOTHERFUCKERBITCHASSFUCKKK");
                 continue;
             }
