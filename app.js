@@ -12,8 +12,8 @@ var routes = require('./routes');
 var user = require('./routes/user');
 
 var game = {
-    players : {},
-    bullets : {}
+  players : {},
+  bullets : {}
 }
 
 // all environments
@@ -29,32 +29,33 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
 if ('development' == app.get('env')) {
-    app.use(express.errorHandler());
+  app.use(express.errorHandler());
 }
 
 app.get('/', routes.index);
 app.get('/users', user.list);
 
 server.listen(app.get('port'), function(){
-    console.log('Express server listening on port ' + app.get('port'));
+  console.log('Express server listening on port ' + app.get('port'));
 });
 
 io.sockets.on('connection', function(socket) {
-    socket.on('join', function() {
-        socket.emit('team', socket.id);
-    });
-    socket.on('location', function(data) {
-        game.players[socket.id] = { x: data.x, y:data.x, team: data.team };
-    });
-    socket.on('disconnect', function () {
-        delete game.players[socket.id];
-        console.log(socket.id);
-    });
+  socket.on('join', function() {
+    socket.emit('team', socket.id);
+  });
+  socket.on('location', function(data) {
+    game.players[socket.id] = { x: data.x, y:data.x, team: data.team };
+  });
+  socket.on('disconnect', function () {
+    delete game.players[socket.id];
+    console.log(socket.id);
+  });
+  socket.on('hit', function(data) {
+    // TODO: Verify hit. Takes in something
+  });
 });
 
-
-
 setInterval(function() {
-    io.sockets.emit('update', game);
-    console.log(game.players);
+  io.sockets.emit('update', game);
+  console.log(game.players);
 }, 1000);
