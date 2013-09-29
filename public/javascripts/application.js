@@ -14,9 +14,13 @@ function Player(id, x, y, team) {
   this.x = x;
   this.y = y;
   this.team = team;
+<<<<<<< HEAD
   this.entity =  Crafty.e("Paddle, 2D, DOM, Color")
     .color('rgb(255,0,0)')
     .attr({ x: x, y: y, w: 100, h: 100 });
+=======
+  this.entity =  Crafty.e("Player")
+>>>>>>> multiplayer
 
 }
 
@@ -40,10 +44,13 @@ team : entityId,
 };
 
 
+<<<<<<< HEAD
 // This is where we report our location to the server
 var update = setInterval(function() {
   socket.emit('location', playerData);
 }, 100);
+=======
+>>>>>>> multiplayer
 });
 
 
@@ -74,5 +81,9 @@ socket.on('update', function(data) {
       //UPDATE PLAYER LOCATION
     }
   }
+  // This is where we report our location to the server
+  var update = setInterval(function() {
+    socket.emit('location', playerData);
+  }, 100);
   console.log();
 });

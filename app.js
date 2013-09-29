@@ -14,7 +14,7 @@ var user = require('./routes/user');
 var game = {
   players : {},
   bullets : {}
-}
+};
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -63,4 +63,4 @@ io.sockets.on('connection', function(socket) {
 setInterval(function() {
   io.sockets.emit('update', game);
   console.log(game.players);
-}, 40);
+}, 100);
