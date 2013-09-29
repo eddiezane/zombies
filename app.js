@@ -11,6 +11,10 @@ var io = require('socket.io').listen(server);
 var routes = require('./routes');
 var user = require('./routes/user');
 
+var game = {
+  players : {},
+  bullets : {}
+}
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -36,5 +40,16 @@ server.listen(app.get('port'), function(){
 });
 
 io.sockets.on('connection', function(socket) {
-
+  socket.on('join', function() {
+    socket.emit('team', socket.id);
+  });
+  socket.on('location', function(data) {
+   game.players[socket.id] = { x: data.x, y:data.x, team: data.team };
+  });
 });
+
+
+setInterval(function() {
+  io.sockets.emit('update', game);
+  console.log(game.players);
+}, 1000);
