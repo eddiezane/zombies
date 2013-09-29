@@ -12,6 +12,7 @@ Crafty.scene('Game', function() {
     }
 
     socket.on('id', function(entityId) {
+        Crafty.e('Tree').at(9, 9);
         player = Crafty.e('You').at(5, 5)
         .bind('Move', function(e) {
             playerData.x = this._x;

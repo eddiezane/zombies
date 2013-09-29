@@ -59,7 +59,20 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('hit', function(data) {
-    // TODO: Verify hit. Takes in something
+    //data.victim, data.shooter
+    for(var bullet in game.bullets){
+        if(data.shooter == bullet.team){
+            var shooterX = game.players[data.victim].x;
+            var shooterY = game.players[data.victim].y;
+            if(Math.abs(shooterX - bullet.x) <= 100 && Math.abs(shooterY - bullet.y) <= 100){
+                delete game.players[data.victim];
+                delete game.bullets[bullet];
+            }
+
+        }
+    }
+
+      // TODO: Verify hit. Takes in something
   });
 
 });
