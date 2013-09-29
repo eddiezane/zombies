@@ -8,11 +8,12 @@ Crafty.scene('Game', function() {
         this.x = x;
         this.y = y;
         this.team = team;
-        this.entity =  Crafty.e("Player").at(x, y);
+        this.entity =  Crafty.e("Player").at(x, y).attr({id: id, team: team});
     }
 
     socket.on('id', function(entityId) {
         player = Crafty.e('You').at(5, 5)
+        .attr({id: entityId, team: entityId})
         .bind('Move', function(e) {
             playerData.x = this._x;
             playerData.y = this._y;
@@ -30,16 +31,12 @@ Crafty.scene('Game', function() {
         playerData.team = new_team;
     });
     socket.on('update', function(data) {
-        console.log(data);
         var thePlayers = data.players;
         for (var playerKey in thePlayers) {
-            if (playerKey == player) {
-                console.log("SKIPMOTHERFUCKERBITCHASSFUCKKK");
+            if (playerKey == playerData.id) {
                 continue;
             }
             if (players[playerKey] == undefined) {
-                console.log(playerKey);
-
                 players[playerKey] = new Player(playerKey, thePlayers[playerKey].x,
                     thePlayers[playerKey].y, thePlayers[playerKey].team);
             } else {
@@ -52,10 +49,8 @@ Crafty.scene('Game', function() {
         }
         // This is where we report our location to the server
         var update = setInterval(function() {
-            console.log(playerData);
             socket.emit('location', playerData);
         }, 100);
-        console.log();
     });
 });
 

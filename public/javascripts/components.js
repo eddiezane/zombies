@@ -1,3 +1,4 @@
+var range = 300;
 Crafty.c('Grid', {
     init: function() {
         this.attr({
@@ -36,52 +37,35 @@ Crafty.c('Bush', {
     }
 });
 
-Crafty.c('Projectile', {
-    init: function() {
-        this.options = {
-            maxParticles: 1,
-            size: 18,
-            sizeRandom: 0,
-            speed: 3,
-            speedRandom: 0,
-            // Lifespan in frames
-            lifeSpan: 29,
-            lifeSpanRandom: 0,
-            // Angle is calculated clockwise: 12pm is 0deg, 3pm is 90deg etc.
-            angle: 90,
-            angleRandom: 0,
-            startColour: [255, 131, 0, 1],
-            startColourRandom: [0, 0, 0, 0],
-            endColour: [245, 35, 0, 0],
-            endColourRandom: [0, 0, 0, 0],
-            // Only applies when fastMode is off, specifies how sharp the gradients are drawn
-            sharpness: 20,
-            sharpnessRandom: 0,
-            // Random spread from origin
-            spread: 0,
-            // How many frames should this last
-            duration: 30,
-            // Will draw squares instead of circle gradients
-            fastMode: false,
-            gravity: { x: 0, y: 0.0 },
-            // sensible values are 0-3
-            jitter: 0
-        };
-        this.requires('Actor, Particles').particles(options);
-    }
-});
-
 Crafty.c('Player', {
     init: function() {
         this.requires('Actor, Color, Collision')
         .color('rgb(20, 75, 40)')
         .stopOnsolids()
-        .bind('KeyDown', this.shotFired);
+        .bind("explode", this.killed)
+        .onHit('Bullet', function(o) {
+            var destroy = 0;
+            for (var i = 0; i < o.length; i++) {
+                console.log(o[i].team +  ' hit ' + this.team + ' ' + this.id);
+                if (o[i].team != this.team && o[i].team != undefined) destroy = o[i].id;
+                if (o[i].team != this.id && o[i].team != undefined) {
+                    o[i].obj.trigger("explode");
+                }
+            }
+            if (destroy != 0) {
+                console.log("DESTROY", destroy);
+                this.trigger("explode", destroy);
+            }
+        });
+    },
+
+    killed: function(killerId) {
+        socket.emit('hit', {victim: this.id, shooter: killerId});
+        this.destroy();
     },
 
     stopOnsolids: function() {
         this.onHit('Solid', this.stopMovement);
-
         return this;
     },
 
@@ -92,60 +76,34 @@ Crafty.c('Player', {
             this.y -= this._movement.y;
         }
     },
-
-    shotFired: function (e) {
-        if (e.key != Crafty.keys.SPACE) return;
-
-        var options = {
-            maxParticles: 1,
-            size: 18,
-            sizeRandom: 0,
-            speed: 3,
-            speedRandom: 0,
-            // Lifespan in frames
-            lifeSpan: 29,
-            lifeSpanRandom: 0,
-            // Angle is calculated clockwise: 12pm is 0deg, 3pm is 90deg etc.
-            angle: this._rotation,
-            angleRandom: 0,
-            startColour: [255, 131, 0, 1],
-            startColourRandom: [0, 0, 0, 0],
-            endColour: [245, 35, 0, 0],
-            endColourRandom: [0, 0, 0, 0],
-            // Only applies when fastMode is off, specifies how sharp the gradients are drawn
-            sharpness: 20,
-            sharpnessRandom: 0,
-            // Random spread from origin
-            spread: 0,
-            // How many frames should this last
-            duration: 30,
-            // Will draw squares instead of circle gradients
-            fastMode: false,
-            gravity: { x: 0, y: 0.0 },
-            // sensible values are 0-3
-            jitter: 0
-        };
-        Crafty.e("2D,Canvas,Particles, Grid").particles(options).at(this.at().x, this.at().y);
-    },
-
 });
 
 Crafty.c('You', {
     init: function() {
         this.requires('Player, Fourway')
-            .fourway(4);
+            .fourway(4)
+            .bind('KeyDown', this.shotFired)
+            .color('rgb(50, 120, 30)');
+    },
+    shotFired: function (e) {
+        if (e.key == Crafty.keys.RIGHT_ARROW) this._rotation = 0;
+        else if (e.key == Crafty.keys.LEFT_ARROW) this._rotation = 180;
+        else if (e.key == Crafty.keys.UP_ARROW) this._rotation = -90;
+        else if (e.key == Crafty.keys.DOWN_ARROW) this._rotation = 90;
+        if (e.key != Crafty.keys.SPACE) return;
+        console.log("FIRE");
+        Crafty.e('Bullet, Tween').at(this.at().x, this.at().y).attr({team: this.id})
+    .tween({x: this.x + Math.cos(this._rotation*Math.PI/180)*range, y: this.y + Math.sin(this._rotation*Math.PI/180)*range}, 100);
     },
 });
 
-
-Crafty.c('Village', {
+Crafty.c('Bullet', {
     init: function() {
-        this.requires('Actor, Color')
-            .color('rgb(170, 125, 40)');
-    },
-
-    collect: function() {
+        this.requires('2D, Canvas, Color, Grid, Collision')
+    .attr({w:6, h:6, speed:10})
+    .bind("explode", function() {
         this.destroy();
-        Crafty.trigger('VillageVisited', this);
+    })
+.color("#bf2121");
     }
 });
