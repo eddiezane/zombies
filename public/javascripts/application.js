@@ -15,8 +15,8 @@ function Player(id, x, y, team) {
   this.y = y;
   this.team = team;
   this.entity =  Crafty.e("Paddle, 2D, DOM, Color")
-      .color('rgb(255,0,0)')
-      .attr({ x: x, y: y, w: 100, h: 100 });
+    .color('rgb(255,0,0)')
+    .attr({ x: x, y: y, w: 100, h: 100 });
 
 }
 
@@ -32,20 +32,20 @@ socket.on('id', function(entityId) {
     playerData.y = this._y;
   });
 
-  playerData = {
-    id : entityId,
-    x : 100,
-    y : 100,
-    team : entityId,
-  };
+playerData = {
+  id : entityId,
+x : 100,
+y : 100,
+team : entityId,
+};
 
-
-});
 
 // This is where we report our location to the server
 var update = setInterval(function() {
   socket.emit('location', playerData);
 }, 100);
+});
+
 
 // A team change has occured
 socket.on('team', function(new_team) {

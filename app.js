@@ -63,4 +63,4 @@ io.sockets.on('connection', function(socket) {
 setInterval(function() {
   io.sockets.emit('update', game);
   console.log(game.players);
-}, 10);
+}, 40);
