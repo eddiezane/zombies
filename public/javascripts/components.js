@@ -73,7 +73,7 @@ Crafty.c('Projectile', {
 
 Crafty.c('Player', {
     init: function() {
-        this.requires('Actor, Fourway, Color, Collision, Solid')
+        this.requires('Actor, Fourway, Color, Collision')
         .fourway(4)
         .color('rgb(20, 75, 40)')
         .stopOnsolids()
