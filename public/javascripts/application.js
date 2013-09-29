@@ -14,9 +14,7 @@ function Player(id, x, y, team) {
   this.x = x;
   this.y = y;
   this.team = team;
-  this.entity =  Crafty.e("Paddle, 2D, DOM, Color")
-      .color('rgb(255,0,0)')
-      .attr({ x: x, y: y, w: 100, h: 100 });
+  this.entity =  Crafty.e("Player")
 
 }
 
@@ -42,10 +40,6 @@ socket.on('id', function(entityId) {
 
 });
 
-// This is where we report our location to the server
-var update = setInterval(function() {
-  socket.emit('location', playerData);
-}, 100);
 
 // A team change has occured
 socket.on('team', function(new_team) {
@@ -74,5 +68,9 @@ socket.on('update', function(data) {
       //UPDATE PLAYER LOCATION
     }
   }
+  // This is where we report our location to the server
+  var update = setInterval(function() {
+    socket.emit('location', playerData);
+  }, 100);
   console.log();
 });
