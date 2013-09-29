@@ -45,6 +45,10 @@ io.sockets.on('connection', function(socket) {
     socket.emit('team', socket.id);
   });
 
+  socket.on('bullet', function(data){
+      game.bullets[socket.id] = {x: data.x, y:data.y, dir:data.dir, team: data.team};
+  });
+
   socket.on('location', function(data) {
     game.players[socket.id] = { x: data.x, y: data.y, team : data.team };
   });
