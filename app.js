@@ -41,21 +41,26 @@ server.listen(app.get('port'), function(){
 
 io.sockets.on('connection', function(socket) {
   socket.on('join', function() {
+    socket.emit('id', socket.id);
     socket.emit('team', socket.id);
   });
+
   socket.on('location', function(data) {
-    game.players[socket.id] = { x: data.x, y:data.x, team: data.team };
+    game.players[socket.id] = { x: data.x, y: data.y, team : data.team };
   });
+
   socket.on('disconnect', function () {
     delete game.players[socket.id];
     console.log(socket.id);
   });
+
   socket.on('hit', function(data) {
     // TODO: Verify hit. Takes in something
   });
+
 });
 
 setInterval(function() {
   io.sockets.emit('update', game);
   console.log(game.players);
-}, 1000);
+}, 10);
