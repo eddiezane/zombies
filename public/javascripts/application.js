@@ -1,14 +1,14 @@
 Crafty.init(400, 400);
 Crafty.background('rgb(127,127,127)');
 
-var loc= {
+var loc = {
   x: null,
   y: null,
   team: null
 }
 
 // Emit new player join
-socket.emit('join', null);
+socket.emit('join');
 
 var player = Crafty.e("Paddle, 2D, DOM, Color, Fourway")
   .color('rgb(255,0,0)')
